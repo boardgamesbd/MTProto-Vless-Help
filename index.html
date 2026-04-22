@@ -240,10 +240,6 @@
     </div>
 
     <div id="content-ru" lang="ru">
-        <div style="text-align: center;">
-            <a href="#video-tutorial" class="tutorial-btn">📹 Посмотреть туториал</a>
-        </div>
-
         <div class="disclaimer-top">
             <b>ВНИМАНИЕ:</b> Наше приложение <u>не является VPN</u>. 
         </div>
@@ -288,25 +284,6 @@
         </div>
         <div class="info-box">
             <b>7.</b> Если сервер не отвечает — найдите другой в нашем приложении MTProto. Иногда сервера не работают, но они полностью <b>бесплатные и без лимита</b>.
-        </div>
-
-        <div class="video-section" id="video-tutorial">
-            <h2>📹 Видео-туториал</h2>
-            <div class="video-wrapper">
-                <div class="video-loader" id="videoLoader">
-                    <div class="loader-bar">
-                        <div class="loader-progress" id="loaderProgress"></div>
-                    </div>
-                    <div class="loader-text">Загрузка видео... <span id="loaderPercent">0%</span></div>
-                </div>
-                <div class="play-overlay" id="playOverlay">
-                    <span class="play-text">Нажмите чтобы воспроизвести</span>
-                </div>
-                <video class="tutorial-video" id="tutorialVideo" controls>
-                    <source src="tutorial_vless.mp4" type="video/mp4">
-                    Ваш браузер не поддерживает видео.
-                </video>
-            </div>
         </div>
     </div>
 
@@ -354,55 +331,6 @@
         });
     }
 
-    // Video loading progress
-    document.addEventListener('DOMContentLoaded', function() {
-        const video = document.getElementById('tutorialVideo');
-        const loader = document.getElementById('videoLoader');
-        const progressBar = document.getElementById('loaderProgress');
-        const percentText = document.getElementById('loaderPercent');
-        const playOverlay = document.getElementById('playOverlay');
-
-        if (video) {
-            video.addEventListener('progress', function() {
-                if (video.buffered.length > 0) {
-                    const buffered = video.buffered.end(video.buffered.length - 1);
-                    const duration = video.duration;
-                    if (duration > 0) {
-                        const percent = Math.round((buffered / duration) * 100);
-                        progressBar.style.width = percent + '%';
-                        percentText.textContent = percent + '%';
-                    }
-                }
-            });
-
-            video.addEventListener('canplay', function() {
-                loader.classList.add('hidden');
-            });
-
-            video.addEventListener('waiting', function() {
-                loader.classList.remove('hidden');
-            });
-
-            video.addEventListener('playing', function() {
-                loader.classList.add('hidden');
-                playOverlay.classList.add('hidden');
-            });
-
-            video.addEventListener('pause', function() {
-                playOverlay.classList.remove('hidden');
-            });
-
-            video.addEventListener('ended', function() {
-                playOverlay.classList.remove('hidden');
-            });
-
-            if (playOverlay) {
-                playOverlay.addEventListener('click', function() {
-                    video.play();
-                });
-            }
-        }
-    });
 </script>
 
 </body>
