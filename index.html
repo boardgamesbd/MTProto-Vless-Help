@@ -126,6 +126,108 @@
             margin-top: 20px;
             font-size: 0.95rem;
         }
+        .tutorial-btn {
+            background: #bb86fc;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: inline-block;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .tutorial-btn:hover {
+            background: #9c5bc7;
+        }
+        .video-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .video-section h2 {
+            color: #bb86fc;
+            margin-bottom: 15px;
+        }
+        .tutorial-video {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 10px;
+            border: 2px solid #333;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .video-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            z-index: 10;
+            transition: opacity 0.3s;
+        }
+        .video-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader-bar {
+            width: 80%;
+            max-width: 300px;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .loader-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #bb86fc, #9c5bc7);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .loader-text {
+            color: #bb86fc;
+            font-size: 0.9rem;
+        }
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            z-index: 5;
+            cursor: pointer;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+        .play-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .play-text {
+            color: #fff;
+            font-size: 1.1rem;
+            text-align: center;
+            pointer-events: none;
+        }
+        .play-text::before {
+            content: "▶ ";
+            font-size: 1.5rem;
+        }
         b { color: #ffffff; }
     </style>
 </head>
@@ -138,6 +240,10 @@
     </div>
 
     <div id="content-ru" lang="ru">
+        <div style="text-align: center;">
+            <a href="#video-tutorial" class="tutorial-btn">📹 Посмотреть туториал</a>
+        </div>
+
         <div class="disclaimer-top">
             <b>ВНИМАНИЕ:</b> Наше приложение <u>не является VPN</u>. 
         </div>
@@ -182,6 +288,25 @@
         </div>
         <div class="info-box">
             <b>7.</b> Если сервер не отвечает — найдите другой в нашем приложении MTProto. Иногда сервера не работают, но они полностью <b>бесплатные и без лимита</b>.
+        </div>
+
+        <div class="video-section" id="video-tutorial">
+            <h2>📹 Видео-туториал</h2>
+            <div class="video-wrapper">
+                <div class="video-loader" id="videoLoader">
+                    <div class="loader-bar">
+                        <div class="loader-progress" id="loaderProgress"></div>
+                    </div>
+                    <div class="loader-text">Загрузка видео... <span id="loaderPercent">0%</span></div>
+                </div>
+                <div class="play-overlay" id="playOverlay">
+                    <span class="play-text">Нажмите чтобы воспроизвести</span>
+                </div>
+                <video class="tutorial-video" id="tutorialVideo" controls>
+                    <source src="tutorial_vless.mp4" type="video/mp4">
+                    Ваш браузер не поддерживает видео.
+                </video>
+            </div>
         </div>
     </div>
 
@@ -228,6 +353,56 @@
             if(btn.innerText.toLowerCase() === lang) btn.classList.add('active');
         });
     }
+
+    // Video loading progress
+    document.addEventListener('DOMContentLoaded', function() {
+        const video = document.getElementById('tutorialVideo');
+        const loader = document.getElementById('videoLoader');
+        const progressBar = document.getElementById('loaderProgress');
+        const percentText = document.getElementById('loaderPercent');
+        const playOverlay = document.getElementById('playOverlay');
+
+        if (video) {
+            video.addEventListener('progress', function() {
+                if (video.buffered.length > 0) {
+                    const buffered = video.buffered.end(video.buffered.length - 1);
+                    const duration = video.duration;
+                    if (duration > 0) {
+                        const percent = Math.round((buffered / duration) * 100);
+                        progressBar.style.width = percent + '%';
+                        percentText.textContent = percent + '%';
+                    }
+                }
+            });
+
+            video.addEventListener('canplay', function() {
+                loader.classList.add('hidden');
+            });
+
+            video.addEventListener('waiting', function() {
+                loader.classList.remove('hidden');
+            });
+
+            video.addEventListener('playing', function() {
+                loader.classList.add('hidden');
+                playOverlay.classList.add('hidden');
+            });
+
+            video.addEventListener('pause', function() {
+                playOverlay.classList.remove('hidden');
+            });
+
+            video.addEventListener('ended', function() {
+                playOverlay.classList.remove('hidden');
+            });
+
+            if (playOverlay) {
+                playOverlay.addEventListener('click', function() {
+                    video.play();
+                });
+            }
+        }
+    });
 </script>
 
 </body>
